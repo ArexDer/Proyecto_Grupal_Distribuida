@@ -31,32 +31,32 @@ dependencyManagement {
 
 
 dependencies {
-	// 📦 JPA → Persistencia con Hibernate/JPA (API para ORM con BD relacional)
+	//  JPA → Persistencia con Hibernate/JPA (API para ORM con BD relacional)
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-	// 📦 REST y servidor web embebido (Tomcat) + JSON (Jackson)
+	//  REST y servidor web embebido (Tomcat) + JSON (Jackson)
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
-	// 📦 Migraciones de base de datos automáticas (Flyway Core)
+	//  Migraciones de base de datos automáticas (Flyway Core)
 	implementation("org.flywaydb:flyway-core")
 
-	// 📦 Driver de Flyway para PostgreSQL (necesario junto con flyway-core)
+	//  Driver de Flyway para PostgreSQL (necesario junto con flyway-core)
 	implementation("org.flywaydb:flyway-database-postgresql")
 
-	// 📦 Service Discovery usando Consul (registra y descubre servicios en Consul)
+	//  Service Discovery usando Consul (registra y descubre servicios en Consul)
 	implementation("org.springframework.cloud:spring-cloud-starter-consul-discovery")
 
-	// 📦 Actuator → expone endpoints para métricas, health checks, info, etc.
+	//  Actuator → expone endpoints para métricas, health checks, info, etc.
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-	// 📦 Anotaciones de Lombok (solo en compilación)
+	//  Anotaciones de Lombok (solo en compilación)
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 
-	// 📦 Driver de PostgreSQL (para conectarse a la base de datos en tiempo de ejecución)
+	//  Driver de PostgreSQL (para conectarse a la base de datos en tiempo de ejecución)
 	runtimeOnly("org.postgresql:postgresql")
 
-	// 📦 Dependencias para pruebas con Spring Boot
+	//  Dependencias para pruebas con Spring Boot
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
