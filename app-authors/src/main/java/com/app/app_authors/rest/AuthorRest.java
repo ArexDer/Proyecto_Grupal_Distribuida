@@ -56,7 +56,7 @@ public class AuthorRest {
         return authorRepository.findAll();
     }
 
-    // http://localhost:8080/api/authors/find/ISB-002
+    // http://localhost:8080/api/authors/find/2
     @GetMapping("/find/{isbn}")
     public List<Author> findByBook(@PathVariable("isbn") String isbn) {
         //generar errores

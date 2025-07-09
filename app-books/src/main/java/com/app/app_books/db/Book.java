@@ -1,5 +1,6 @@
 package com.app.app_books.db;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@Data
 @Entity
 @Table(name = "books")
 public class Book {
@@ -22,7 +24,5 @@ public class Book {
 
     private Integer version = 1;
 
-    @Column(name = "author_id")
-    private Integer authorId;
 
 }
