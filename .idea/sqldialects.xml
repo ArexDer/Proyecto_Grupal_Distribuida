@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/app-authors/src/main/resources/db/migration/V1.0.1__crear_tabla_author.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-authors/src/main/resources/db/migration/V1.0.2__crear_tabla_author-books.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-authors/src/main/resources/db/migration/V1.0.4__crear_tablas_customers.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-authors/src/main/resources/db/migration/V1.0.6__llenar_customers.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-customers/src/main/resources/db/migration/V1.0.1__crear_tabla_customers.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-customers/src/main/resources/db/migration/V1.0.2__crear_tabla_purchase_orders.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-customers/src/main/resources/db/migration/V1.0.3__crear_tabla_line_items.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-customers/src/main/resources/db/migration/V1.0.4__agregar_indices.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/app-customers/src/main/resources/db/migration/V1.0.5__agregar_columna_shipping_address_purchase_orders.sql" dialect="PostgreSQL" />
+  </component>
+</project>
