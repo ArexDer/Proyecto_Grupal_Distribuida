@@ -20,12 +20,14 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
 import java.util.Collections;
 import java.util.List;
 
 
 @RestController
-@RequestMapping(path = "/books", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
 @Transactional
 public class BookRest {
 
@@ -55,6 +57,7 @@ public class BookRest {
     }
 
     // GET /books/{isbn}
+    // http://localhost:9090/books/2222
     @GetMapping(path = "/{isbn}")
     public ResponseEntity<BookDto> findByIsbn(@PathVariable("isbn") String isbn) {
         var obj = repository.findByIsbnBook(isbn);
@@ -126,4 +129,33 @@ public class BookRest {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
+
+
+// http://localhost:9090/books/2222
+@DeleteMapping(path = "/{isbn}")
+    public ResponseEntity<Void> delete(@PathVariable("isbn") String isbn) {
+        if (!repository.existsById(isbn)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        try {
+            // Eliminar primero line_items (usando isbn)
+            repository.deleteLineItemsByIsbn(isbn);
+
+            // Eliminar relaciones books_authors (usando books_isbn)
+            repository.deleteBookAuthorsById(isbn);
+
+            // Eliminar registros de inventory (usando isbn)
+            repository.deleteInventoryByIsbn(isbn);
+
+            // Finalmente eliminar el libro
+            repository.deleteById(isbn);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
 }
+

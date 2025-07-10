@@ -15,7 +15,12 @@ import java.util.List;
 @Table(name = "purchase_orders")
 public class PurchaseOrder {
 
-    public enum Status {PENDING, DELIVERED};
+    public enum Status {
+        NINGUNA,    // ---> 0
+        ENTREGADO,  // ---> 1
+        PENDIENTE,  // ---> 2
+        NINGUNA_ALT // ---> 3
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +35,7 @@ public class PurchaseOrder {
     @Column
     //@Enumerated(EnumType.STRING)
     @Enumerated(EnumType.ORDINAL)
-    private Status status = Status.PENDING;
+    private Status status ;
 
     @Column(name = "placed_on", nullable = false)
     private LocalDateTime placedOn;

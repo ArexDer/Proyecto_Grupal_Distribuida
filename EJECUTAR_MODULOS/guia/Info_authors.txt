@@ -1,0 +1,21 @@
+1.- EJECUTAR EL CONSUL Y TRAEFIK primero
+
+2.- EJECUTAR en cada modulo o desde la carpeeta raiz:
+java -jar app-authors\build\libs\app-authors-0.0.1-SNAPSHOT.jar
+
+java -jar app-books\build\libs\app-books-0.0.1-SNAPSHOT.jar
+
+java -jar app-customers\build\libs\app-customers-0.0.1-SNAPSHOT.jar
+
+
+/*
+EN CASO DE LEVANTAR DOS INSTANCIAS SERIA:
+
+java -jar -Dserver.port=7070 app-customers\build\libs\app-customers-0.0.1-SNAPSHOT.jar
+
+Y el otro puerto seria:
+
+java -jar -Dserver.port=7071 app-customers\build\libs\app-customers-0.0.1-SNAPSHOT.jar
+
+
+

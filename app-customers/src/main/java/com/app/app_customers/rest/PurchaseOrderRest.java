@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import com.app.app_customers.db.Customer;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -50,7 +51,7 @@ public class PurchaseOrderRest {
 
     private BookRestClient createBookClient() {
         RestClient restClient = clientBuilder
-                .baseUrl(booksServiceUrl + "/books")
+                .baseUrl(booksServiceUrl) //.baseUrl(booksServiceUrl + "/books")
                 .build();
 
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
@@ -80,6 +81,7 @@ public class PurchaseOrderRest {
         return dto;
     }
 
+    // http://localhost:7070/orders/customer/1
     @GetMapping("/customer/{customerId}")
     public List<PurchaseOrderDto> ordersByCustomer(@PathVariable Integer customerId) {
         return repository.findByCustomerId(customerId)
@@ -88,6 +90,7 @@ public class PurchaseOrderRest {
                 .toList();
     }
 
+    // http://localhost:7070/orders/1
     @GetMapping("/{orderId}")
     public ResponseEntity<PurchaseOrderDto> orderDetail(@PathVariable Integer orderId) {
         return repository.findById(orderId)
@@ -96,27 +99,115 @@ public class PurchaseOrderRest {
                 .orElse(ResponseEntity.status(404).build());
     }
 
+    // http://localhost:7070/orders
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody PurchaseOrder order) {
+        // Asegurar que no se establezca un ID manualmente
+        order.setId(null);
+
+        // Si el customer no tiene ID, es un customer nuevo
+        if (order.getCustomer() != null && order.getCustomer().getId() == null) {
+            // Asegurar que el customer tampoco tenga ID establecido
+            order.getCustomer().setId(null);
+            // Guardar el customer nuevo primero
+            Customer savedCustomer = customerRepository.save(order.getCustomer());
+            order.setCustomer(savedCustomer);
+        }
+        // Si tiene ID, obtener el customer existente
+        else if (order.getCustomer() != null && order.getCustomer().getId() != null) {
+            Customer existingCustomer = customerRepository.findById(order.getCustomer().getId())
+                    .orElseThrow(() -> new RuntimeException("Customer no encontrado"));
+            order.setCustomer(existingCustomer);
+        }
+
         repository.save(order);
         return ResponseEntity.status(201).build();
     }
 
     @PutMapping("/{orderId}")
     public ResponseEntity<Void> update(@PathVariable Integer orderId, @RequestBody PurchaseOrder order) {
-        if (repository.existsById(orderId)) {
-            order.setId(orderId);
-            repository.save(order);
-            return ResponseEntity.ok().build();
+        if (!repository.existsById(orderId)) {
+            return ResponseEntity.status(404).build();
         }
-        return ResponseEntity.status(404).build();
+
+        // Establecer el ID de la orden
+        order.setId(orderId);
+
+        // Manejar el customer
+        if (order.getCustomer() != null) {
+            if (order.getCustomer().getId() == null) {
+                // Customer nuevo - crearlo
+                order.getCustomer().setId(null);
+                Customer savedCustomer = customerRepository.save(order.getCustomer());
+                order.setCustomer(savedCustomer);
+            } else {
+                // Customer existente - validar que existe
+                Customer existingCustomer = customerRepository.findById(order.getCustomer().getId())
+                        .orElseThrow(() -> new RuntimeException("Customer no encontrado"));
+                order.setCustomer(existingCustomer);
+            }
+        }
+
+        // Manejar LineItems - asegurar que no tengan IDs establecidos para evitar conflictos
+        if (order.getLineItems() != null) {
+            order.getLineItems().forEach(item -> item.setId(null));
+        }
+
+        repository.save(order);
+        return ResponseEntity.ok().build();
     }
 
+
+    // http://localhost:7070/orders/customers
     @GetMapping("/customers")
     public List<CustomerDto> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
                 .map(customer -> mapper.map(customer, CustomerDto.class))
                 .collect(Collectors.toList());
+    }
+
+    //Eliminar customer
+// http://localhost:7070/orders/customers/{customerId}
+    @DeleteMapping("/customers/{customerId}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Integer customerId) {
+        if (!customerRepository.existsById(customerId)) {
+            return ResponseEntity.status(404).build();
+        }
+
+        // Verificar si el customer tiene órdenes asociadas
+        List<PurchaseOrder> customerOrders = repository.findByCustomerId(customerId);
+        if (!customerOrders.isEmpty()) {
+            return ResponseEntity.status(409).build(); // Conflict - tiene órdenes asociadas
+        }
+
+        customerRepository.deleteById(customerId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
+
+    //  Ver todas las órdenes
+// http://localhost:7070/orders
+    @GetMapping
+    public List<PurchaseOrderDto> getAllOrders() {
+        return repository.findAll()
+                .stream()
+                .map(this::map)
+                .toList();
+    }
+
+    // DELETE - Eliminar orden
+// http://localhost:7070/orders/2
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> delete(@PathVariable Integer orderId) {
+        if (!repository.existsById(orderId)) {
+            return ResponseEntity.status(404).build();
+        }
+
+        repository.deleteById(orderId);
+        return ResponseEntity.ok().build();
     }
 }
