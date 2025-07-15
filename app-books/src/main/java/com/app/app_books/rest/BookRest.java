@@ -29,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
 @Transactional
+@CrossOrigin
 public class BookRest {
 
     @Value("${server.port}")

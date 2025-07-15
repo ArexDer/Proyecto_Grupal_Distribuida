@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/orders")
 @Transactional
+@CrossOrigin
 public class PurchaseOrderRest {
 
     private static final Logger log = LoggerFactory.getLogger(PurchaseOrderRest.class);

@@ -13,6 +13,7 @@ import java.util.List;
 //URL http://localhost:8080/api/authors
 @RestController
 @RequestMapping("/api/authors")
+@CrossOrigin
 public class AuthorRest {
 
     @Value("${server.port}")
