@@ -79,6 +79,11 @@ public class PurchaseOrderRest {
             }
         });
 
+        BigDecimal total = dto.getLineItems().stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        dto.setTotal(total);
         return dto;
     }
 
@@ -100,25 +105,26 @@ public class PurchaseOrderRest {
                 .orElse(ResponseEntity.status(404).build());
     }
 
-    // http://localhost:7070/orders
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody PurchaseOrder order) {
-        // Asegurar que no se establezca un ID manualmente
         order.setId(null);
 
-        // Si el customer no tiene ID, es un customer nuevo
+        // Manejo del cliente
         if (order.getCustomer() != null && order.getCustomer().getId() == null) {
-            // Asegurar que el customer tampoco tenga ID establecido
             order.getCustomer().setId(null);
-            // Guardar el customer nuevo primero
             Customer savedCustomer = customerRepository.save(order.getCustomer());
             order.setCustomer(savedCustomer);
-        }
-        // Si tiene ID, obtener el customer existente
-        else if (order.getCustomer() != null && order.getCustomer().getId() != null) {
+        } else if (order.getCustomer() != null && order.getCustomer().getId() != null) {
             Customer existingCustomer = customerRepository.findById(order.getCustomer().getId())
                     .orElseThrow(() -> new RuntimeException("Customer no encontrado"));
             order.setCustomer(existingCustomer);
+        }
+
+        if (order.getLineItems() != null) {
+            order.getLineItems().forEach(item -> {
+                item.setId(null);
+                item.setPurchaseOrder(order);
+            });
         }
 
         repository.save(order);
@@ -158,7 +164,6 @@ public class PurchaseOrderRest {
         return ResponseEntity.ok().build();
     }
 
-
     // http://localhost:7070/orders/customers
     @GetMapping("/customers")
     public List<CustomerDto> getAllCustomers() {
@@ -169,7 +174,7 @@ public class PurchaseOrderRest {
     }
 
     //Eliminar customer
-// http://localhost:7070/orders/customers/{customerId}
+    // http://localhost:7070/orders/customers/{customerId}
     @DeleteMapping("/customers/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Integer customerId) {
         if (!customerRepository.existsById(customerId)) {
@@ -186,12 +191,8 @@ public class PurchaseOrderRest {
         return ResponseEntity.ok().build();
     }
 
-
-
-
-
     //  Ver todas las órdenes
-// http://localhost:7070/orders
+    // http://localhost:7070/orders
     @GetMapping
     public List<PurchaseOrderDto> getAllOrders() {
         return repository.findAll()
@@ -201,7 +202,7 @@ public class PurchaseOrderRest {
     }
 
     // DELETE - Eliminar orden
-// http://localhost:7070/orders/2
+    // http://localhost:7070/orders/2
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> delete(@PathVariable Integer orderId) {
         if (!repository.existsById(orderId)) {
@@ -211,4 +212,25 @@ public class PurchaseOrderRest {
         repository.deleteById(orderId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/customers")
+    public ResponseEntity<Void> createCustomer(@RequestBody CustomerDto customerDto) {
+        Customer customer = mapper.map(customerDto, Customer.class);
+        customer.setId(null); // evitar conflictos
+        customerRepository.save(customer);
+        return ResponseEntity.status(201).build();
+    }
+
+    @PutMapping("/customers/{customerId}")
+    public ResponseEntity<Void> updateCustomer(@PathVariable Integer customerId, @RequestBody CustomerDto customerDto) {
+        if (!customerRepository.existsById(customerId)) {
+            return ResponseEntity.status(404).build();
+        }
+        Customer customer = mapper.map(customerDto, Customer.class);
+        customer.setId(customerId);
+
+        customerRepository.save(customer);
+        return ResponseEntity.ok().build();
+    }
+
 }

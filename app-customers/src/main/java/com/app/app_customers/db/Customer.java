@@ -26,6 +26,5 @@ public class Customer {
     private Integer version;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PurchaseOrder> orders;
 }
