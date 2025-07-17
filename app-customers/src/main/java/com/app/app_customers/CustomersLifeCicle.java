@@ -37,7 +37,7 @@ public class CustomersLifeCicle {
         var ipAddress = InetAddress.getLocalHost();
         System.out.printf("Registering CUSTOMERS service at %s:%d%n", ipAddress.getHostAddress(), appPort);
 
-        // Spring Cloud Consul se encarga del registro automáticamente
+
         serviceRegistration.start();
     }
 
@@ -45,7 +45,7 @@ public class CustomersLifeCicle {
     public void stop() {
         System.out.println("Shutting down CUSTOMERS service instances");
 
-        // Spring Cloud Consul se encarga de la desregistración
+
         serviceRegistration.stop();
     }
 }

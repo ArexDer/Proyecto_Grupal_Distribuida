@@ -39,7 +39,7 @@ public class BooksLifeCicle{
         var ipAddress = InetAddress.getLocalHost();
         System.out.printf("Registering service at %s:%d%n", ipAddress.getHostAddress(), appPort);
 
-        // Spring Cloud Consul se encarga del registro usando application.properties
+
         serviceRegistration.start();
     }
 
@@ -47,7 +47,7 @@ public class BooksLifeCicle{
     public void stop() {
         System.out.println("Shutting down BOOKS service instances");
 
-        // Spring Cloud Consul se encarga de la desregistración
+
         serviceRegistration.stop();
     }
 

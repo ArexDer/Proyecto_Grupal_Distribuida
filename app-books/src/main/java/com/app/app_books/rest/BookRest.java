@@ -141,16 +141,16 @@ public class BookRest {
         }
 
         try {
-            // Eliminar primero line_items (usando isbn)
+            // Elimina  primero line_items (usando isbn)
             repository.deleteLineItemsByIsbn(isbn);
 
-            // Eliminar relaciones books_authors (usando books_isbn)
+            // Elimina relaciones books_authors (usando books_isbn)
             repository.deleteBookAuthorsById(isbn);
 
-            // Eliminar registros de inventory (usando isbn)
+            // Elimina registros de inventory (usando isbn)
             repository.deleteInventoryByIsbn(isbn);
 
-            // Finalmente eliminar el libro
+            // ahora si se puede  eliminar el libro, sino nos daba problemas de la clave foránea
             repository.deleteById(isbn);
 
             return ResponseEntity.ok().build();

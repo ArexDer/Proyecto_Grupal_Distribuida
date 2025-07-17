@@ -137,25 +137,25 @@ public class PurchaseOrderRest {
             return ResponseEntity.status(404).build();
         }
 
-        // Establecer el ID de la orden
+
         order.setId(orderId);
 
-        // Manejar el customer
+
         if (order.getCustomer() != null) {
             if (order.getCustomer().getId() == null) {
-                // Customer nuevo - crearlo
+
                 order.getCustomer().setId(null);
                 Customer savedCustomer = customerRepository.save(order.getCustomer());
                 order.setCustomer(savedCustomer);
             } else {
-                // Customer existente - validar que existe
+
                 Customer existingCustomer = customerRepository.findById(order.getCustomer().getId())
                         .orElseThrow(() -> new RuntimeException("Customer no encontrado"));
                 order.setCustomer(existingCustomer);
             }
         }
 
-        // Manejar LineItems - asegurar que no tengan IDs establecidos para evitar conflictos
+
         if (order.getLineItems() != null) {
             order.getLineItems().forEach(item -> item.setId(null));
         }
@@ -181,7 +181,7 @@ public class PurchaseOrderRest {
             return ResponseEntity.status(404).build();
         }
 
-        // Verificar si el customer tiene órdenes asociadas
+
         List<PurchaseOrder> customerOrders = repository.findByCustomerId(customerId);
         if (!customerOrders.isEmpty()) {
             return ResponseEntity.status(409).build(); // Conflict - tiene órdenes asociadas
@@ -201,7 +201,7 @@ public class PurchaseOrderRest {
                 .toList();
     }
 
-    // DELETE - Eliminar orden
+    // DELETE - Elimina la orden
     // http://localhost:7070/orders/2
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> delete(@PathVariable Integer orderId) {

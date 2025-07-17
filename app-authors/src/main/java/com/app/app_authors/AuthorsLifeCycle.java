@@ -48,7 +48,7 @@ public class AuthorsLifeCycle {
     public void stop() {
         System.out.println("Shutting down AUTHORS service instances");
 
-        // Spring Cloud Consul maneja automáticamente la desregistración
+        // Spring Cloud Consul maneja automáticamente la desregistración con todo igual revisar en caso de que nos de porblemsa
         serviceRegistration.stop();
     }
 }
