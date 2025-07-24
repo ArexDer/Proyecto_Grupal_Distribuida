@@ -59,6 +59,9 @@ dependencies {
 	//  Dependencias para pruebas con Spring Boot
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+
+	implementation("io.micrometer:micrometer-registry-prometheus")
 }
 
 tasks.withType<Test> {
